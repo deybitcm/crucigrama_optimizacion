@@ -112,18 +112,17 @@ class CreadorCrucigrama():
         # Verificar si hay solapamiento entre x y y
         solapamiento = self.crucigrama.solapamientos.get((x, y))
         if solapamiento is None:
-            return False
+            return False # Si no hay solaplamientos 
 
-        i, j = solapamiento
+        i, j = solapamiento # indices de posicion
         revisado = False
-        dominio_x = self.dominios[x]
+
+        # Dominios
+        dominio_x = list(self.dominios[x])
         dominio_y = self.dominios[y]
 
-        #convertir el dominio de x en una lista para poder eliminar elementos
-        dominio_x = list(dominio_x)
-
         # Revisar cada palabra en el dominio de x
-        for palabra_x in dominio_x:
+        for palabra_x in self.dominios[x]:
             if all(palabra_x[i] == palabra_y[j] for palabra_y in dominio_y):
                 continue
             dominio_x.remove(palabra_x)
@@ -189,7 +188,11 @@ class CreadorCrucigrama():
                 if vecino not in asignacion and palabra in self.dominios[vecino]
             )
 
-        return sorted(self.dominios[var], key=num_eliminar)
+        # Retornar solo valores que no se encuentren en la asignación de las otras variables
+        return sorted(
+            self.dominios[var] - set(asignacion.values()),
+            key=lambda palabra: num_eliminar(palabra)
+        )
 
         # return self.dominios[var]
 
