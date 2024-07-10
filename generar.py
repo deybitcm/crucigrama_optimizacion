@@ -98,6 +98,10 @@ class CreadorCrucigrama():
                 palabra for palabra in self.dominios[var]
                 if len(palabra) == var.longitud
             }
+            if len(self.dominios[var]) == 0:
+                return False; # No hay solucion
+
+        return True; # Hay solucion
 
     def revisar(self, x, y):
         """
@@ -181,6 +185,7 @@ class CreadorCrucigrama():
         - Puede NO estar ordenada.
         - Puede estar ordenada por el número de valores que descartan para las variables vecinas (menor a mayor).
         """
+        # return self.dominios[var]
 
         def num_eliminar(palabra):
             return sum(
@@ -189,12 +194,12 @@ class CreadorCrucigrama():
             )
 
         # Retornar solo valores que no se encuentren en la asignación de las otras variables
+        # Ordenar por el número de valores que descartan para las variables vecinas (menor a mayor)
         return sorted(
             self.dominios[var] - set(asignacion.values()),
             key=lambda palabra: num_eliminar(palabra)
         )
 
-        # return self.dominios[var]
 
     def seleccionar_variable_no_asignada(self, asignacion):
         """
@@ -249,8 +254,9 @@ class CreadorCrucigrama():
         """
         Aplique la consistencia de nodos y arcos y, a continuación, resuelva el CSP.
         """
-        self.consistencia_nodo()
-        if not self.ac3():
+        if not self.consistencia_nodo(): # Consistencia unaria
+            return None
+        if not self.ac3(): # Consistencia binaria
             return None
         asignacion = self.backtrack(dict())
         return asignacion
