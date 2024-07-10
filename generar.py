@@ -169,11 +169,7 @@ class CreadorCrucigrama():
         for x, y in self.crucigrama.solapamientos:
             # Si x y y están en la asignación
             if x in asignacion and y in asignacion and self.crucigrama.solapamientos[x, y] is not None:
-                # Obtener los índices de solapamiento
-                tupla = self.crucigrama.solapamientos[x, y]
-                # Desestrcuturar variable tupla
-                i = tupla[0]
-                j = tupla[1]
+                i, j = self.crucigrama.solapamientos[x, y]
                 # Si las letras no son iguales
                 if asignacion[x][i] != asignacion[y][j]:
                     return False
@@ -187,15 +183,15 @@ class CreadorCrucigrama():
         - Puede estar ordenada por el número de valores que descartan para las variables vecinas (menor a mayor).
         """
 
-        # def num_eliminar(palabra):
-        #     return sum(
-        #         1 for vecino in self.crucigrama.vecinos(var)
-        #         if vecino not in asignacion and palabra in self.dominios[vecino]
-        #     )
+        def num_eliminar(palabra):
+            return sum(
+                1 for vecino in self.crucigrama.vecinos(var)
+                if vecino not in asignacion and palabra in self.dominios[vecino]
+            )
 
-        # return sorted(self.dominios[var], key=num_eliminar)
+        return sorted(self.dominios[var], key=num_eliminar)
 
-        return self.dominios[var]
+        # return self.dominios[var]
 
     def seleccionar_variable_no_asignada(self, asignacion):
         """
@@ -207,9 +203,9 @@ class CreadorCrucigrama():
         """
         
         # para 1
-        for var in self.crucigrama.variables:
-            if var not in asignacion:
-                return var
+        # for var in self.crucigrama.variables:
+        #     if var not in asignacion:
+        #         return var
 
         # para 2
         # return min(
@@ -218,10 +214,10 @@ class CreadorCrucigrama():
         # )
 
         # # para 3
-        # return min(
-        #     (var for var in self.crucigrama.variables if var not in asignacion),
-        #     key=lambda var: (len(self.dominios[var]), -len(self.crucigrama.vecinos(var)))
-        # )
+        return min(
+            (var for var in self.crucigrama.variables if var not in asignacion),
+            key=lambda var: (len(self.dominios[var]), -len(self.crucigrama.vecinos(var)))
+        )
 
     def backtrack(self, asignacion):
         """
