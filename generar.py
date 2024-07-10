@@ -10,10 +10,13 @@ class CreadorCrucigrama():
         Crear un nuevo CSP (problema de satisfacción de restricciones) - crucigrama.
         """
         self.crucigrama = crucigrama
+
+        # Dominio de cada variable
         self.dominios = {
-            var: list(self.crucigrama.palabras.copy())
+            var: self.crucigrama.palabras.copy()
             for var in self.crucigrama.variables
-        } # Dominio de cada variable
+        }
+
 
     def cuadricula_letras(self, asignacion):
         """
@@ -122,15 +125,29 @@ class CreadorCrucigrama():
         revisado = False
 
         # Dominios
-        dominio_x = list(self.dominios[x])
+        dominio_x = self.dominios[x]
         dominio_y = self.dominios[y]
 
-        # Revisar cada palabra en el dominio de x
-        for palabra_x in self.dominios[x]:
-            if all(palabra_x[i] == palabra_y[j] for palabra_y in dominio_y):
-                continue
-            dominio_x.remove(palabra_x)
+        # Lista a remover
+        remover = [palabra_x for palabra_x in dominio_x if all(palabra_x[i] != palabra_y[j] for palabra_y in dominio_y)]
+
+        # Remover palabras
+        for palabra_x in remover:
+            self.dominios[x].remove(palabra_x)
+            if (palabra_x in self.dominios[x]):
+                print("sigo vivo")
             revisado = True
+
+        # # Revisar cada palabra en el dominio de x
+        # for palabra_x in dominio_x:
+        #     if all(palabra_x[i] == palabra_y[j] for palabra_y in dominio_y):
+        #         continue
+        #     # Guardar en lista para remover despues
+
+        #     # print("removido: ", palabra_x)
+        #     # if(palabra_x in self.dominios[x]):
+        #     #     print("sigo vivo")            
+        #     revisado = True
 
         return revisado
 
