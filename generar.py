@@ -164,12 +164,17 @@ class CreadorCrucigrama():
             arcs = list(self.crucigrama.solapamientos.keys())
 
         while arcs:
+            # Tomar el primer arco
             x, y = arcs.pop(0)
+            # Revisar el arco
             if self.revisar(x, y):
+                # Si el dominio de x es vacío
                 if not self.dominios[x]:
-                    return False
+                    return False # No hay solución
+                # Agregar arcos
                 for z in self.crucigrama.vecinos(x) - {y}:
                     arcs.append((z, x))
+        # Si no hay dominios vacíos y se cumple la consistencia de arcos
         return True
 
     def asignacion_completa(self, asignacion):
@@ -204,6 +209,7 @@ class CreadorCrucigrama():
         """
         # return self.dominios[var]
 
+        # Función para contar el número de valores que descartan para las variables vecinas
         def num_eliminar(palabra):
             return sum(
                 1 for vecino in self.crucigrama.vecinos(var)
@@ -253,18 +259,34 @@ class CreadorCrucigrama():
 
         Si no es posible la asignación, devuelve None.
         """
-        
+        # Si la asignación es completa
         if self.asignacion_completa(asignacion):
-            return asignacion
+            return asignacion # Se retorna la asignación (solución)
 
+        # Se selecciona una variable no asignada
         var = self.seleccionar_variable_no_asignada(asignacion)
+
+        # Seleccionar valores en el dominio de la variable
         for valor in self.ordenar_valores_dominio(var, asignacion):
+            # Asignar valor a la variable
             asignacion[var] = valor
+            # Si la asignación es consistente
             if self.consistencia(asignacion):
-                resultado = self.backtrack(asignacion)
-                if resultado is not None:
-                    return resultado
+                # aplicar inferencia
+                dominios_guardados = self.dominios.copy()
+                # Se busca la consistencia de arcos de acuerdo a la asignación actual
+                if self.ac3([(x, var) for x in self.crucigrama.vecinos(var)]):
+                    # Se realiza la recursión
+                    resultado = self.backtrack(asignacion)
+                    # Si se encuentra una solución
+                    if resultado is not None:
+                        return resultado # Se retorna la asignación (solución)
+                # Cuando no se encuentra una solución se restauran los dominios
+                self.dominios = dominios_guardados
+            # Si la asignación no es consistente se elimina el valor
             del asignacion[var]
+        
+        # Si no se encuentra una solución
         return None
     
     def solve(self):
