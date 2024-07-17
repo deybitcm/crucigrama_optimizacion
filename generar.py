@@ -272,7 +272,7 @@ class CreadorCrucigrama():
             asignacion[var] = valor
             # Si la asignación es consistente
             if self.consistencia(asignacion):
-                # aplicar inferencia
+                # aplicar inferencia, se guarda los dominios
                 dominios_guardados = self.dominios.copy()
                 # Se busca la consistencia de arcos de acuerdo a la asignación actual
                 if self.ac3([(x, var) for x in self.crucigrama.vecinos(var)]):
