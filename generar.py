@@ -223,7 +223,6 @@ class CreadorCrucigrama():
             key=lambda palabra: num_eliminar(palabra)
         )
 
-
     def seleccionar_variable_no_asignada(self, asignacion):
         """
         Devuelve una variable no asignada que no forme ya parte de `asignacion`.
