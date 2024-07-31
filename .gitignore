@@ -1,3 +1,6 @@
 # ignorar archivos .png
 *.png
 *.zip
+
+#ignorar archivo _pycache_
+__pycache__/
