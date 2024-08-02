@@ -101,10 +101,6 @@ class CreadorCrucigrama():
                 palabra for palabra in self.dominios[var]
                 if len(palabra) == var.longitud
             }
-            if len(self.dominios[var]) == 0:
-                return False; # No hay solucion
-
-        return True; # Hay solucion
 
     def revisar(self, x, y):
         """
@@ -134,20 +130,9 @@ class CreadorCrucigrama():
         # Remover palabras
         for palabra_x in remover:
             self.dominios[x].remove(palabra_x)
-            if (palabra_x in self.dominios[x]):
-                print("sigo vivo")
+        
+        if(len(remover) > 0):
             revisado = True
-
-        # # Revisar cada palabra en el dominio de x
-        # for palabra_x in dominio_x:
-        #     if all(palabra_x[i] == palabra_y[j] for palabra_y in dominio_y):
-        #         continue
-        #     # Guardar en lista para remover despues
-
-        #     # print("removido: ", palabra_x)
-        #     # if(palabra_x in self.dominios[x]):
-        #     #     print("sigo vivo")            
-        #     revisado = True
 
         return revisado
 
@@ -169,7 +154,7 @@ class CreadorCrucigrama():
             # Revisar el arco
             if self.revisar(x, y):
                 # Si el dominio de x es vacío
-                if not self.dominios[x]:
+                if len(self.dominios[x]) == 0:
                     return False # No hay solución
                 # Agregar arcos
                 for z in self.crucigrama.vecinos(x) - {y}:
@@ -189,15 +174,16 @@ class CreadorCrucigrama():
         Devuelve True si `asignacion` es consistencia (es decir, las palabras encajan en crucigrama
         sin caracteres conflictivos); devuelve False en caso contrario.
         """
-        #Revisar arcos (solapamientos)
+        
 
+        #Revisar arcos (solapamientos)
         for x, y in self.crucigrama.solapamientos:
             # Si x y y están en la asignación
             if x in asignacion and y in asignacion and self.crucigrama.solapamientos[x, y] is not None:
                 i, j = self.crucigrama.solapamientos[x, y]
                 # Si las letras no son iguales
                 if asignacion[x][i] != asignacion[y][j]:
-                    return False
+                    return False # Hay conflictos
                 
         return True # Si no hay conflictos
 
@@ -214,10 +200,10 @@ class CreadorCrucigrama():
             return sum(
                 1 for vecino in self.crucigrama.vecinos(var)
                 if vecino not in asignacion and palabra in self.dominios[vecino]
-            )
+            )        
 
         # Retornar solo valores que no se encuentren en la asignación de las otras variables
-        # Ordenar por el número de valores que descartan para las variables vecinas (menor a mayor)
+        # Ordenar por el número de valores que descartan para las variables vecinas (menor a mayor, menos restricciones, evita volver a revisar)
         return sorted(
             self.dominios[var] - set(asignacion.values()),
             key=lambda palabra: num_eliminar(palabra)
@@ -243,10 +229,10 @@ class CreadorCrucigrama():
         #     key=lambda var: len(self.dominios[var])
         # )
 
-        # # para 3
+        # para 3
         return min(
             (var for var in self.crucigrama.variables if var not in asignacion),
-            key=lambda var: (len(self.dominios[var]), -len(self.crucigrama.vecinos(var)))
+            key=lambda var: (len(self.dominios[var]) -len(self.crucigrama.vecinos(var)))
         )
 
     def backtrack(self, asignacion):
@@ -292,12 +278,12 @@ class CreadorCrucigrama():
         """
         Aplique la consistencia de nodos y arcos y, a continuación, resuelva el CSP.
         """
-        if not self.consistencia_nodo(): # Consistencia unaria
-            return None
-        if not self.ac3(): # Consistencia binaria
-            return None
-        asignacion = self.backtrack(dict())
-        return asignacion
+        # Consistencia unaria
+        self.consistencia_nodo()
+        # Consistencia binaria
+        self.ac3()
+        return self.backtrack(dict())
+        
 
 def main():
 

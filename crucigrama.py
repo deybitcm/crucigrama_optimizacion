@@ -115,7 +115,7 @@ class Crucigrama():
                     continue
                 celdas1 = v1.celdas
                 celdas2 = v2.celdas
-                interseccion = set(celdas1).intersection(celdas2)
+                interseccion = set(celdas1).intersection(celdas2) #(i,j) de v1 y v2 que se solapan
                 if not interseccion:
                     self.solapamientos[v1, v2] = None
                 else:
@@ -123,7 +123,7 @@ class Crucigrama():
                     self.solapamientos[v1, v2] = (
                         celdas1.index(interseccion), # índice de la celda en v1
                         celdas2.index(interseccion)  # índice de la celda en v2
-                    ) # (i, j), donde i es el índice de la celda en v1 y j es el índice de la celda en v2 donde se solapan
+                    ) # (i, j), donde i es el índice de la celda en v1 y j es el índice de la celda en v2
 
     def vecinos(self, var):
         """Dada una variable, retornar un conjunto de variables que solapan."""
