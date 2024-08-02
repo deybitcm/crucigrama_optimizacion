@@ -231,7 +231,7 @@ class CreadorCrucigrama():
         # para 3
         return min(
             (var for var in self.crucigrama.variables if var not in asignacion),
-            key=lambda var: (len(self.dominios[var]), -len(self.crucigrama.vecinos(var)))
+            key=lambda var: (len(self.dominios[var]), -len(self.crucigrama.vecinos(var))) # Comparación de tuplas, primero menor dominio, luego mayor grado
         )
 
     def backtrack(self, asignacion):
