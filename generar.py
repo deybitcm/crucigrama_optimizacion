@@ -202,7 +202,7 @@ class CreadorCrucigrama():
                 if vecino not in asignacion and palabra in self.dominios[vecino]
             )        
 
-        # Retornar solo valores que no se encuentren en la asignación de las otras variables
+        # Retornar solo valores que no se encuentren en la asignación de las otras variables (evita repetir palabras)
         # Ordenar por el número de valores que descartan para las variables vecinas (menor a mayor, menos restricciones, evita volver a revisar)
         return sorted(
             self.dominios[var] - set(asignacion.values()),
