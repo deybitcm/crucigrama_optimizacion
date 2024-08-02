@@ -196,17 +196,16 @@ class CreadorCrucigrama():
         # return self.dominios[var]
 
         # Función para contar el número de valores que descartan para las variables vecinas
-        def num_eliminar(palabra):
+        def cantidad_palabras_eliminar(palabra):
             return sum(
                 1 for vecino in self.crucigrama.vecinos(var)
                 if vecino not in asignacion and palabra in self.dominios[vecino]
             )        
 
-        # Retornar solo valores que no se encuentren en la asignación de las otras variables (evita repetir palabras)
         # Ordenar por el número de valores que descartan para las variables vecinas (menor a mayor, menos restricciones, evita volver a revisar)
         return sorted(
-            self.dominios[var] - set(asignacion.values()),
-            key=lambda palabra: num_eliminar(palabra)
+            self.dominios[var] - set(asignacion.values()), # Valores que no se encuentran en la asignación
+            key=lambda palabra: cantidad_palabras_eliminar(palabra)
         )
 
     def seleccionar_variable_no_asignada(self, asignacion):
@@ -232,7 +231,7 @@ class CreadorCrucigrama():
         # para 3
         return min(
             (var for var in self.crucigrama.variables if var not in asignacion),
-            key=lambda var: (len(self.dominios[var]) -len(self.crucigrama.vecinos(var)))
+            key=lambda var: (len(self.dominios[var]), -len(self.crucigrama.vecinos(var)))
         )
 
     def backtrack(self, asignacion):
@@ -314,4 +313,4 @@ if __name__ == "__main__":
     start_time = time.time()
     main()
     end_time = time.time()
-    print("Execution time: {:.2f} seconds".format(end_time - start_time))
+    print("Execution time: {:.4f} seconds".format(end_time - start_time))
